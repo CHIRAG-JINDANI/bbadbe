@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>IIMB BBA DBE — 13-Day Sprint Plan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bitter:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EFE7D3;
+    --paper-deep:#E4D8B9;
+    --card:#F6F1E2;
+    --ink:#1B2A44;
+    --ink-soft:#4B5A73;
+    --ink-faint:#7C8698;
+    --stamp:#A6373A;
+    --stamp-soft:#F1DCDB;
+    --brass:#A9781F;
+    --brass-soft:#F1E6C8;
+    --teal:#2E6B66;
+    --teal-soft:#DCEAE7;
+    --slate:#3A5578;
+    --slate-soft:#DEE6EF;
+    --plum:#6B4A66;
+    --plum-soft:#EBDFE8;
+    --line:rgba(27,42,68,0.16);
+    --shadow:0 1px 0 rgba(27,42,68,0.06), 0 8px 24px -14px rgba(27,42,68,0.35);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(27,42,68,0.05) 1px, transparent 0);
+    background-size:14px 14px;
+    color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1180px;margin:0 auto;padding:28px 20px 60px;}
+
+  /* ===== Header: hall-ticket style ===== */
+  .ticket{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:14px;
+    box-shadow:var(--shadow);
+    padding:22px 26px;
+    position:relative;
+    overflow:hidden;
+    margin-bottom:22px;
+  }
+  .ticket::before{
+    content:"";
+    position:absolute; left:0; top:0; bottom:0; width:8px;
+    background:repeating-linear-gradient(180deg,var(--stamp) 0 10px, transparent 10px 18px);
+    opacity:.55;
+  }
+  .ticket-top{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:14px;}
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--ink-faint); margin:0 0 4px;
+  }
+  h1{
+    font-family:'Bitter',serif; font-weight:700; font-size:26px; margin:0 0 6px; color:var(--ink);
+    letter-spacing:.01em;
+  }
+  .sub{color:var(--ink-soft); font-size:14px; line-height:1.55; max-width:620px;}
+  .stamp-badge{
+    font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:600;
+    color:var(--stamp); border:1.5px solid var(--stamp); border-radius:8px;
+    padding:8px 14px; text-align:center; transform:rotate(-3deg);
+    background:var(--stamp-soft); white-space:nowrap;
+  }
+  .stamp-badge b{display:block;font-size:16px;letter-spacing:.03em;}
+
+  .progress-row{display:flex;align-items:center;gap:14px;margin-top:18px;}
+  .progress-track{
+    flex:1; height:10px; border-radius:6px; background:var(--paper-deep);
+    position:relative; overflow:hidden; border:1px solid var(--line);
+  }
+  .progress-fill{
+    height:100%; background:linear-gradient(90deg,var(--teal),var(--slate));
+    border-radius:6px; width:0%; transition:width .4s ease;
+  }
+  .progress-ticks{position:absolute;inset:0;display:flex;}
+  .progress-ticks span{flex:1;border-right:1px solid rgba(239,231,211,.6);}
+  .progress-ticks span:last-child{border-right:none;}
+  .progress-label{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-soft);white-space:nowrap;}
+
+  .exclude-note{
+    margin-top:14px; font-size:12.5px; color:var(--ink-faint); border-top:1px dashed var(--line);
+    padding-top:12px;
+  }
+  .exclude-note b{color:var(--ink-soft);}
+
+  /* ===== Layout ===== */
+  .board{display:grid; grid-template-columns:220px 1fr; gap:20px;}
+  @media (max-width:820px){ .board{grid-template-columns:1fr;} }
+
+  .rail{display:flex; flex-direction:column; gap:8px;}
+  .day-tab{
+    background:var(--card); border:1px solid var(--line); border-radius:10px;
+    padding:10px 12px; cursor:pointer; text-align:left; position:relative;
+    display:flex; align-items:center; gap:10px; transition:transform .12s ease, box-shadow .12s ease;
+  }
+  .day-tab:hover{transform:translateX(2px);}
+  .day-tab.active{
+    border-color:var(--ink); box-shadow:var(--shadow);
+    background:linear-gradient(90deg, var(--slate-soft), var(--card) 55%);
+  }
+  .day-num{
+    font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:13px;
+    width:30px;height:30px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    background:var(--paper-deep); color:var(--ink); flex:none;
+  }
+  .day-tab.done .day-num{background:var(--teal); color:#fff;}
+  .day-meta{display:flex;flex-direction:column;line-height:1.25;}
+  .day-date{font-size:12.5px; font-weight:600; color:var(--ink);}
+  .day-mock{font-size:11px; color:var(--ink-faint);}
+  .hole{
+    position:absolute; right:8px; top:50%; transform:translateY(-50%);
+    width:10px; height:10px; border-radius:50%; background:var(--paper);
+    border:1px solid var(--line);
+  }
+
+  .panel{background:var(--card); border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow); padding:22px 24px; min-height:400px;}
+  .panel-head{display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:10px; border-bottom:1px solid var(--line); padding-bottom:14px; margin-bottom:16px;}
+  .panel-title{font-family:'Bitter',serif; font-size:20px; font-weight:700;}
+  .panel-date{font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--ink-faint); margin-top:2px;}
+  .mock-pill{
+    font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:600; color:#fff;
+    background:var(--stamp); padding:7px 12px; border-radius:20px; white-space:nowrap;
+  }
+  .day-progress{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--ink-soft);margin-top:6px;}
+
+  .block{border:1px solid var(--line); border-radius:12px; margin-bottom:14px; overflow:hidden;}
+  .block-head{padding:10px 16px; display:flex; align-items:center; justify-content:space-between; gap:10px;}
+  .block-title-row{display:flex; align-items:center; gap:8px;}
+  .block-tag{font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.06em; text-transform:uppercase; padding:2px 8px; border-radius:5px; font-weight:600;}
+  .block-title{font-weight:700; font-size:14.5px;}
+  .block-time{font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--ink-faint);}
+  .block-body{padding:4px 16px 12px;}
+  .item{display:flex; align-items:flex-start; gap:10px; padding:7px 2px; font-size:13.5px; line-height:1.45; border-bottom:1px dashed rgba(27,42,68,0.08);}
+  .item:last-child{border-bottom:none;}
+  .item input{margin-top:3px; width:15px; height:15px; accent-color:var(--ink); flex:none; cursor:pointer;}
+  .item label{cursor:pointer;}
+  .item.checked label{color:var(--ink-faint); text-decoration:line-through; text-decoration-color:var(--ink-faint);}
+  .priority{
+    display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:9.5px; font-weight:700;
+    color:var(--brass); border:1px solid var(--brass); background:var(--brass-soft);
+    padding:0 5px; border-radius:4px; margin-left:6px; letter-spacing:.04em; transform:translateY(-1px);
+  }
+
+  .b-mock .block-head{background:var(--stamp-soft);} .b-mock .block-tag{background:var(--stamp); color:#fff;}
+  .b-review .block-head{background:var(--paper-deep);} .b-review .block-tag{background:var(--ink); color:#fff;}
+  .b-qa .block-head{background:var(--slate-soft);} .b-qa .block-tag{background:var(--slate); color:#fff;}
+  .b-lr .block-head{background:var(--teal-soft);} .b-lr .block-tag{background:var(--teal); color:#fff;}
+  .b-varc .block-head{background:var(--plum-soft);} .b-varc .block-tag{background:var(--plum); color:#fff;}
+  .b-night .block-head{background:var(--brass-soft);} .b-night .block-tag{background:var(--brass); color:#fff;}
+
+  .legend{display:flex; flex-wrap:wrap; gap:10px 18px; margin-top:20px; font-size:11.5px; color:var(--ink-soft);}
+  .legend span{display:inline-flex; align-items:center; gap:6px;}
+  .dot{width:9px;height:9px;border-radius:50%;display:inline-block;}
+
+  .reset-btn{
+    font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--ink-soft);
+    background:none; border:1px solid var(--line); border-radius:8px; padding:6px 12px; cursor:pointer;
+  }
+  .reset-btn:hover{border-color:var(--stamp); color:var(--stamp);}
+  .footer-row{display:flex; justify-content:space-between; align-items:center; margin-top:18px;}
+
+  .save-btn{
+    position:fixed; right:22px; bottom:22px; z-index:60;
+    font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:13px; letter-spacing:.02em;
+    color:#fff; background:#2458A4; border:none; border-radius:30px;
+    padding:13px 22px; cursor:pointer; display:flex; align-items:center; gap:8px;
+    box-shadow:0 6px 18px -4px rgba(36,88,164,0.55), 0 2px 4px rgba(27,42,68,0.15);
+    transition:transform .12s ease, box-shadow .12s ease, background .2s ease;
+  }
+  .save-btn:hover{transform:translateY(-1px); box-shadow:0 10px 22px -4px rgba(36,88,164,0.6);}
+  .save-btn:active{transform:translateY(0px) scale(.98);}
+  .save-btn.saved{background:var(--teal);}
+  .save-btn .icon{font-size:15px; line-height:1;}
+  @media (max-width:600px){ .save-btn{right:16px; bottom:16px; padding:12px 18px; font-size:12px;} }
+</style>
+</head>
+<body>
+<div class="save-wrap" style="position:fixed;right:22px;bottom:76px;z-index:60;max-width:220px;text-align:right;">
+  <div id="storageBadge" style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--ink-soft);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:6px 10px;box-shadow:var(--shadow);"></div>
+</div>
+<button class="save-btn" id="saveBtn" title="Save your ticked checkmarks"><span class="icon">💾</span><span id="saveBtnText">Save Progress</span></button>
+<div class="wrap">
+
+  <div class="ticket">
+    <div class="ticket-top">
+      <div>
+        <p class="eyebrow">Admit Card · Self-Issued</p>
+        <h1>IIM Bangalore BBA DBE — 13-Day Sprint</h1>
+        <p class="sub">Wed 8 Jul → Mon 20 Jul. Built from your syllabus tracker (blue = already done) and the four PYQ weightage sheets. Sequenced so every remaining QA / LR / VARC sub-topic is covered, weighted by how often it actually shows up.</p>
+      </div>
+      <div class="stamp-badge">13 DAYS<b>13 MOCKS</b></div>
+    </div>
+    <div class="progress-row">
+      <span class="progress-label" id="progressLabel">0 / 0 done</span>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div><div class="progress-ticks" id="progressTicks"></div></div>
+    </div>
+    <div class="exclude-note"><b>Deliberately excluded:</b> General Awareness / Current Affairs (col. 4) — you're handling that separately. Everything else is here: the blue (already-completed) QA topics get a quick revision pass on Day 1, and the rest of QA, full LR syllabus, and full VARC syllabus are covered fresh across the 13 days.</div>
+  </div>
+
+  <div class="board">
+    <div class="rail" id="rail"></div>
+    <div class="panel" id="panel"></div>
+  </div>
+
+  <div class="legend">
+    <span><span class="dot" style="background:var(--stamp)"></span> Mock / review</span>
+    <span><span class="dot" style="background:var(--slate)"></span> QA</span>
+    <span><span class="dot" style="background:var(--teal)"></span> LR</span>
+    <span><span class="dot" style="background:var(--plum)"></span> VARC</span>
+    <span><span class="dot" style="background:var(--brass)"></span> Nightly RC + Vocab / wrap-up</span>
+    <span><span class="priority" style="position:static;">HIGH-WT</span> = high question-count in your PYQ sheets</span>
+  </div>
+  <div class="footer-row">
+    <span style="font-size:11.5px;color:var(--ink-faint);">Progress saves automatically in this browser.</span>
+    <button class="reset-btn" id="resetBtn">Reset all checkmarks</button>
+  </div>
+</div>
+
+<script>
+const DAYS = [
+{d:1,date:"Wed, 8 Jul",mock:"IIM Rohtak 2019",blocks:[
+  {t:"mock",tag:"Mock",title:"IIM Rohtak 2019 — Full Paper",time:"7:00–9:30 AM",items:["Attempt cold, fully timed, no notes or breaks","Mark every guess with a dot — you'll need this in review"]},
+  {t:"review",tag:"Review",title:"Mock Review",time:"10:00–11:15 AM",items:["Redo every wrong/skipped question by hand","Tag each miss: concept gap / silly slip / ran out of time","Write down 3 traps to remember"]},
+  {t:"qa",tag:"QA",title:"Quick Revision — Already Completed <span class=\"priority\" style=\"color:var(--teal);border-color:var(--teal);background:var(--teal-soft);\">BLUE</span>",time:"11:15–11:45 AM",items:["Percentage — formulas, % change, successive % application","Profit & Loss — marked price, discount chains, dishonest dealer tricks","Time & Work — work-rate, pipes & cisterns, efficiency ratios","Time, Speed & Distance — relative speed, boats & streams, races","Mixture & Allegations — revise the half you've already done (2nd half comes on Day 6)"]},
+  {t:"qa",tag:"QA",title:"Number System",time:"11:45 AM–1:15 PM",items:["Divisibility rules 2–13","Remainders & cyclicity of powers","Factorials — trailing zeros, highest power of a prime in n!","HCF & LCM incl. fraction/word-problem applications"]},
+  {t:"lr",tag:"LR",title:"Pattern Reasoning",time:"2:15–3:30 PM",items:["Analogy — number / letter / word","Classification — number, word & letter","Series — number, letter, mixed","Odd One Out"]},
+  {t:"varc",tag:"VARC",title:"Vocabulary Core",time:"4:00–5:15 PM",items:["Build 20 synonyms + 20 antonyms from a fresh word list","Fill-Ups — quick intro drill, 10 Qs","Definition-based vocab, 10 Qs"]},
+  {t:"night",tag:"Nightly",title:"RC + Vocab Drill",time:"6:00–7:00 PM",items:["2 RC passages, medium, 8 min each — review every option not just the answer","Flashcard-revise today's 40 words","One-line note: what you'll fix tomorrow"]},
+]},
+{d:2,date:"Thu, 9 Jul",mock:"IIM Rohtak 2020",blocks:[
+  {t:"mock",tag:"Mock",title:"IIM Rohtak 2020 — Full Paper",time:"7:00–9:30 AM",items:["Full timed attempt","Dot every guess"]},
+  {t:"review",tag:"Review",title:"Mock Review",time:"10:00–11:15 AM",items:["Redo all misses","Compare error pattern vs Day 1 — improving or repeating?"]},
+  {t:"qa",tag:"QA",title:"Algebra I",time:"12:00–1:30 PM",items:["Linear equations — word problems, 2/3 variable systems","Algebraic expressions & identities","Surds & indices"]},
+  {t:"lr",tag:"LR",title:"Coding & Relations",time:"2:15–3:30 PM",items:["Coding-Decoding — letter/number/substitution codes","Direction Sense","Blood Relations <span class=\"priority\">HIGH-WT</span> — 4 Qs in PYQ set, drill family-tree diagrams"]},
+  {t:"varc",tag:"VARC",title:"Grammar I",time:"4:00–5:15 PM",items:["Parts of Speech <span class=\"priority\">HIGH-WT</span> — 4 Qs typical","Tenses <span class=\"priority\">HIGH-WT</span> — 4 Qs typical, focus on tense-consistency errors"]},
+  {t:"night",tag:"Nightly",title:"RC + Vocab Drill",time:"6:00–7:00 PM",items:["2 RC passages, timed","Antonym/Synonym flash set, 40 words"]},
+]},
+{d:3,date:"Fri, 10 Jul",mock:"IIM Indore 2019",blocks:[
+  {t:"mock",tag:"Mock",title:"IIM Indore 2019 — Full Paper",time:"7:00–9:30 AM",items:["Full timed attempt"]},
+  {t:"review",tag:"Review",title:"Mock Review",time:"10:00–11:15 AM",items:["Redo all misses, log error type"]},
+  {t:"qa",tag:"QA",title:"Algebra II + Progressions",time:"12:00–2:00 PM",items:["Exponents & logarithms","Quadratic equations — roots, nature of roots, sign analysis","Progressions & Series <span class=\"priority\">HIGH-WT</span> — top-weighted single sub-topic (5 Qs), give this the extra 30 min"]},
+  {t:"lr",tag:"LR",title:"Sequencing & Codes",time:"2:30–3:45 PM",items:["Ranking / Sequencing","Alphabet Test (dictionary order)","Insert Missing Character"]},
+  {t:"varc",tag:"VARC",title:"RC Deep Focus <span class=\"priority\">HIGH-WT</span>",time:"4:15–5:45 PM",items:["RC is the single biggest VARC sub-topic (12 Qs) — 3 passages today, mixed genre","Parajumbles — intro, 8 Qs"]},
+  {t:"night",tag:"Nightly",title:"RC + Vocab Drill",time:"6:15–7:15 PM",items:["1 extra RC passage — inference-heavy","Vocab revision: cumulative flash-review of Days 1–3 words"]},
+]},
+{d:4,date:"Sat, 11 Jul",mock:"IIM Indore 2020",blocks:[
+  {t:"mock",tag:"Mock",title:"IIM Indore 2020 — Full Paper",time:"7:00–9:30 AM",items:["Full timed attempt"]},
+  {t:"review",tag:"Review",title:"Mock Review",time:"10:00–11:15 AM",items:["Redo all misses, log error type"]},
+  {t:"qa",tag:"QA",title:"Algebra III (wrap)",time:"12:00–1:15 PM",items:["Inequalities","Relations & Functions"]},
+  {t:"lr",tag:"LR",title:"Arrangements <span class=\"priority\">HIGH-WT</span>",time:"1:45–3:30 PM",items:["Seating Arrangement — linear, circular, complex conditions. Arrangements is the single highest-weighted LR sub-topic (5 Qs) — take the full 1h45m","Logical Games / puzzles"]},
+  {t:"varc",tag:"VARC",title:"Sentence-Level VARC",time:"4:00–5:30 PM",items:["Parajumbles — continue, 10 more Qs","Sentence Improvement","Error Identification"]},
+  {t:"night",tag:"Nightly",title:"RC + Vocab Drill",time:"6:00–7:00 PM",items:["2 RC passages","Vocab: 20 new words + spaced revision of Day 1–3 lists"]},
+]},
+{d:5,date:"Sun, 12 Jul",mock:"IIM Indore 2021",blocks:[
+  {t:"mock",tag:"Mock",title:"IIM Indore 2021 — Full Paper",time:"7:00–9:30 AM",items:["Full timed attempt"]},
+  {t:"review",tag:"Review",title:"Mock Review",time:"10:00–11:15 AM",items:["Redo all misses, log error type"]},
+  {t:"qa",tag:"QA",title:"Modern Maths I",time:"12:00–1:45 PM",items:["Permutations & Combinations <span class=\"priority\">HIGH-WT</span> — 3 Qs typical","Probability","Set Theory"]},
+  {t:"lr",tag:"LR",title:"Reasoning + Time",time:"2:15–3:30 PM",items:["Mathematical Reasoning","Syllogism","Clocks & Calendar <span class=\"priority\">HIGH-WT</span> — 3 Qs typical"]},
+  {t:"varc",tag:"VARC",title:"Completion Set",time:"4:00–5:15 PM",items:["Gap Fills","Logical Completion","Vocabulary — Idioms, Definition"]},
+  {t:"night",tag:"Nightly",title:"RC + Vocab Drill",time:"6:00–7:00 PM",items:["2 RC passages","Idiom flashcards + cumulative vocab revision"]},
+]},
+{d:6,date:"Mon, 13 Jul",mock:"IIM Indore 2022",blocks:[
+  {t:"mock",tag:"Mock",title:"IIM Indore 2022 — Full Paper",time:"7:00–9:30 AM",items:["Full timed attempt"]},
+  {t:"review",tag:"Review",title:"Mock Review",time:"10:00–11:15 AM",items:["Redo all misses, log error type","Halfway checkpoint — re-scan Days 1–5 error log for repeat mistakes"]},
+  {t:"qa",tag:"QA",title:"Modern Maths II + Arithmetic mop-up",time:"12:00–1:45 PM",items:["Trigonometry — basics, heights & distances","SICI, Ratio-Proportion, Averages, Mean/Median/Mode","Mixture & Allegations — finish the remaining half"]},
+  {t:"lr",tag:"LR",title:"Logic & Sufficiency",time:"2:15–3:30 PM",items:["Coded Inequality","Data Sufficiency","Logical Venn Diagrams"]},
+  {t:"varc",tag:"VARC",title:"Transformation Set",time:"4:00–5:15 PM",items:["Change of Voice","Change of Narration","Critical Reasoning (VARC)"]},
+  {t:"night",tag:"Nightly",title:"RC + Vocab Drill",time:"6:00–7:00 PM",items:["2 RC passages","Vocab: 20 new words + revision"]},
+]},
+{d:7,date:"Tue, 14 Jul",mock:"IIM Indore 2023",blocks:[
+  {t:"mock",tag:"Mock",title:"IIM Indore 2023 — Full Paper",time:"7:00–9:30 AM",items:["Full timed attempt"]},
+  {t:"review",tag:"Review",title:"Mock Review",time:"10:00–11:15 AM",items:["Redo all misses, log error type"]},
+  {t:"qa",tag:"QA",title:"Geometry I",time:"12:00–1:30 PM",items:["Polygons — interior/exterior angle properties","Triangles — congruence, similarity, centers","Quadrilaterals","Hexagon"]},
+  {t:"lr",tag:"LR",title:"Non-Verbal & Critical",time:"2:15–3:15 PM",items:["Non-Verbal Reasoning","Critical Reasoning (LR)"]},
+  {t:"varc",tag:"VARC",title:"Usage & Vocabulary",time:"3:45–5:00 PM",items:["Word Usage","Verbal Analogy","Vocabulary — Similar Words, Phrases"]},
+  {t:"night",tag:"Nightly",title:"RC + Vocab Drill",time:"6:00–7:00 PM",items:["2 RC passages","Cumulative vocab flash-revision (all lists so far)"]},
+]},
+{d:8,date:"Wed, 15 Jul",mock:"IIM Indore 2024",blocks:[
+  {t:"mock",tag:"Mock",title:"IIM Indore 2024 — Full Paper",time:"7:00–9:30 AM",items:["Full timed attempt"]},
+  {t:"review",tag:"Review",title:"Mock Review",time:"10:00–11:15 AM",items:["Redo all misses, log error type"]},
+  {t:"qa",tag:"QA",title:"Geometry II",time:"12:00–1:30 PM",items:["Circles","Ellipse","Mensuration — 2D & 3D solids","Co-ordinate Geometry"]},
+  {t:"lr",tag:"LR",title:"LR-DI + Full Revision",time:"2:15–3:45 PM",items:["Data Interpretation (LR)","Rapid-fire flash revision across all 21 LR sub-topics — 1 Q each"]},
+  {t:"varc",tag:"VARC",title:"RC Intensive <span class=\"priority\">HIGH-WT</span>",time:"4:15–5:45 PM",items:["3 RC passages back-to-back, exam-pace","Vocabulary consolidation — merge & re-test all word lists so far"]},
+  {t:"night",tag:"Nightly",title:"Wrap-up",time:"6:15–7:00 PM",items:["Skim formula sheet for Algebra + Geometry","Note 2 topics that still feel shaky"]},
+]},
+{d:9,date:"Thu, 16 Jul",mock:"IIM Indore 2025",blocks:[
+  {t:"mock",tag:"Mock",title:"IIM Indore 2025 — Full Paper",time:"7:00–9:30 AM",items:["Full timed attempt"]},
+  {t:"review",tag:"Review",title:"Mock Review",time:"10:00–11:15 AM",items:["Redo all misses, log error type"]},
+  {t:"qa",tag:"QA",title:"Higher Maths I + Data Interpretation <span class=\"priority\">HIGH-WT</span>",time:"12:00–2:00 PM",items:["Matrices & Determinants","Complex Numbers","Data Interpretation (QA) — 12 Qs typical in PYQ set, work 2 full sets"]},
+  {t:"lr",tag:"LR",title:"Full Mixed Practice",time:"2:30–3:45 PM",items:["Sectional test covering all LR sub-topics","Patch whatever comes up weak"]},
+  {t:"varc",tag:"VARC",title:"Grammar II + Wrap",time:"4:15–5:30 PM",items:["Punctuation","Spelling Errors","Synonyms & Antonyms — final consolidation","Idioms & Phrases — final consolidation"]},
+  {t:"night",tag:"Nightly",title:"RC + Vocab Drill",time:"6:00–7:00 PM",items:["2 RC passages","Full master word-list self-test"]},
+]},
+{d:10,date:"Fri, 17 Jul",mock:"IIM Indore 2026",blocks:[
+  {t:"mock",tag:"Mock",title:"IIM Indore 2026 — Full Paper (final Indore checkpoint)",time:"7:00–9:30 AM",items:["Full timed attempt — treat this as your last calibration mock before pure DBE papers"]},
+  {t:"review",tag:"Review",title:"Mock Review",time:"10:00–11:15 AM",items:["Redo all misses, log error type"]},
+  {t:"qa",tag:"QA",title:"Higher Maths II (wrap) + Full QA Revision",time:"12:00–2:00 PM",items:["Binomial Theorem","Integration & Differentiation","Mathematical Induction","Rapid formula pass across every QA topic covered Days 1–9"]},
+  {t:"lr",tag:"LR",title:"Full Rapid Revision",time:"2:30–3:30 PM",items:["1 recall question per LR sub-topic, all 21 — flag anything you hesitate on"]},
+  {t:"varc",tag:"VARC",title:"Full Rapid Revision",time:"4:00–5:00 PM",items:["Grammar rules recap","Vocabulary master list, one more pass","RC strategy recap — elimination technique, timing per passage"]},
+  {t:"night",tag:"Nightly",title:"Syllabus Checklist Review",time:"5:30–6:30 PM",items:["Go through every topic in this planner and mark true confidence (not just 'covered')","Shortlist the exact weak spots for Days 11–13 to absorb alongside the DBE mocks"]},
+]},
+{d:11,date:"Sat, 18 Jul",mock:"BBA DBE 2024 — Slot 1",blocks:[
+  {t:"mock",tag:"Mock",title:"BBA DBE 2024 Slot 1 — Full Paper",time:"7:00–9:30 AM",items:["Attempt exactly like exam day — same wake-up time, same timing, no shortcuts"]},
+  {t:"review",tag:"Review",title:"Deep Error Analysis",time:"10:00–12:30 PM",items:["Redo every wrong/skipped question in full","Bucket errors: concept gap / silly slip / time pressure / guess-gone-wrong","Note which section ate the most time relative to its weight"]},
+  {t:"qa",tag:"QA",title:"Targeted Patch-Up",time:"1:00–2:30 PM",items:["Re-drill only the QA weak spots this mock exposed","Cross-check against your Day 10 shortlist"]},
+  {t:"lr",tag:"LR",title:"Targeted Patch-Up",time:"3:00–4:00 PM",items:["Re-drill only the LR weak spots this mock exposed"]},
+  {t:"varc",tag:"VARC",title:"Targeted Patch-Up",time:"4:30–5:30 PM",items:["Re-drill only the VARC weak spots this mock exposed"]},
+  {t:"night",tag:"Nightly",title:"RC + Vocab Drill",time:"6:00–7:00 PM",items:["2 RC passages","Vocab master list flash-test"]},
+]},
+{d:12,date:"Sun, 19 Jul",mock:"BBA DBE 2024 — Slot 2",blocks:[
+  {t:"mock",tag:"Mock",title:"BBA DBE 2024 Slot 2 — Full Paper",time:"7:00–9:30 AM",items:["Attempt exactly like exam day"]},
+  {t:"review",tag:"Review",title:"Deep Error Analysis",time:"10:00–12:30 PM",items:["Redo every wrong/skipped question in full","Bucket errors as before","Compare Slot 1 vs Slot 2: is accuracy trending up? Same weak sections?"]},
+  {t:"qa",tag:"QA",title:"Targeted Patch-Up",time:"1:00–2:30 PM",items:["Re-drill only what's still shaky — should be a short list by now"]},
+  {t:"lr",tag:"LR",title:"Targeted Patch-Up",time:"3:00–4:00 PM",items:["Re-drill only what's still shaky"]},
+  {t:"varc",tag:"VARC",title:"Targeted Patch-Up",time:"4:30–5:30 PM",items:["Re-drill only what's still shaky"]},
+  {t:"night",tag:"Nightly",title:"RC + Vocab Drill",time:"6:00–7:00 PM",items:["2 RC passages","Vocab master list flash-test"]},
+]},
+{d:13,date:"Mon, 20 Jul",mock:"BBA DBE 2025",blocks:[
+  {t:"mock",tag:"Mock",title:"BBA DBE 2025 — Full Paper (final simulation)",time:"7:00–9:30 AM",items:["Final full-length run, exact exam conditions"]},
+  {t:"review",tag:"Review",title:"Final Error Analysis",time:"10:00–12:00 PM",items:["Redo every wrong/skipped question","Write your 1-page 'exam day reminders' sheet: traps, formulas, timing plan per section"]},
+  {t:"night",tag:"Nightly",title:"Light Wrap-Up Only — No New Learning",time:"1:00–3:00 PM",items:["Skim formula sheet once","Flip through vocab flashcards once","Recap LR tricks list once","Rest — sleep, walk, whatever resets you"]},
+]},
+];
+
+const TAG_CLASS = {mock:"b-mock",review:"b-review",qa:"b-qa",lr:"b-lr",varc:"b-varc",night:"b-night"};
+
+let checked = new Set();
+let activeDay = 1;
+
+function itemId(d,bi,ii){ return "d"+d+"-b"+bi+"-i"+ii; }
+
+const STORAGE_KEY = 'dbe-planner-checks';
+const hasClaudeStorage = (typeof window !== 'undefined') && window.storage && typeof window.storage.get === 'function';
+let storageMode = 'unknown';
+
+async function loadChecks(){
+  // Try Claude's artifact storage first (works inside the Claude.ai preview panel)
+  if(hasClaudeStorage){
+    try{
+      const res = await window.storage.get(STORAGE_KEY, false);
+      if(res && res.value){ checked = new Set(JSON.parse(res.value)); }
+      storageMode = 'claude';
+      return;
+    }catch(e){ /* key not found or storage errored — fall through */ }
+  }
+  // Fallback: plain browser localStorage (works when this file is opened directly, e.g. downloaded and double-clicked)
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw){ checked = new Set(JSON.parse(raw)); }
+    storageMode = 'local';
+  }catch(e){
+    checked = new Set();
+    storageMode = 'none';
+  }
+}
+
+async function saveChecks(){
+  const payload = JSON.stringify([...checked]);
+  let ok = false;
+  if(hasClaudeStorage){
+    try{ await window.storage.set(STORAGE_KEY, payload, false); ok = true; storageMode='claude'; }
+    catch(e){ /* fall through to localStorage */ }
+  }
+  if(!ok){
+    try{ localStorage.setItem(STORAGE_KEY, payload); ok = true; storageMode='local'; }
+    catch(e){ storageMode='none'; console.error('save failed in both storage modes', e); }
+  }
+  return ok;
+}
+
+function updateStorageBadge(){
+  const el = document.getElementById('storageBadge');
+  if(!el) return;
+  if(storageMode==='claude') el.textContent = 'Saving to your Claude account';
+  else if(storageMode==='local') el.textContent = 'Saving to this browser only — reopen the same file, same browser, to keep progress';
+  else el.textContent = '⚠ Storage blocked by this browser — progress won\'t persist. Try a normal (non-incognito) tab.';
+}
+
+function allItemIds(){
+  const ids=[];
+  DAYS.forEach(day=>{ day.blocks.forEach((b,bi)=>{ b.items.forEach((it,ii)=>{ ids.push(itemId(day.d,bi,ii)); }); }); });
+  return ids;
+}
+function dayItemIds(day){
+  const ids=[];
+  day.blocks.forEach((b,bi)=>{ b.items.forEach((it,ii)=>{ ids.push(itemId(day.d,bi,ii)); }); });
+  return ids;
+}
+
+function renderRail(){
+  const rail = document.getElementById('rail');
+  rail.innerHTML = '';
+  DAYS.forEach(day=>{
+    const ids = dayItemIds(day);
+    const doneCount = ids.filter(id=>checked.has(id)).length;
+    const isDone = doneCount===ids.length;
+    const btn = document.createElement('button');
+    btn.className = 'day-tab'+(day.d===activeDay?' active':'')+(isDone?' done':'');
+    btn.innerHTML = `<span class="day-num">${isDone?'✓':String(day.d).padStart(2,'0')}</span>
+      <span class="day-meta"><span class="day-date">${day.date}</span><span class="day-mock">${day.mock}</span></span>
+      <span class="hole"></span>`;
+    btn.onclick = ()=>{ activeDay = day.d; renderAll(); };
+    rail.appendChild(btn);
+  });
+}
+
+function renderPanel(){
+  const panel = document.getElementById('panel');
+  const day = DAYS.find(x=>x.d===activeDay);
+  const ids = dayItemIds(day);
+  const doneCount = ids.filter(id=>checked.has(id)).length;
+  let html = `<div class="panel-head">
+    <div><div class="panel-title">Day ${String(day.d).padStart(2,'0')}</div><div class="panel-date">${day.date}</div>
+    <div class="day-progress">${doneCount} / ${ids.length} tasks done</div></div>
+    <div class="mock-pill">MOCK · ${day.mock}</div>
+  </div>`;
+
+  day.blocks.forEach((b,bi)=>{
+    html += `<div class="block ${TAG_CLASS[b.t]}">
+      <div class="block-head">
+        <div class="block-title-row"><span class="block-tag">${b.tag}</span><span class="block-title">${b.title}</span></div>
+        <span class="block-time">${b.time}</span>
+      </div>
+      <div class="block-body">`;
+    b.items.forEach((it,ii)=>{
+      const id = itemId(day.d,bi,ii);
+      const isChecked = checked.has(id);
+      html += `<div class="item${isChecked?' checked':''}">
+        <input type="checkbox" id="${id}" ${isChecked?'checked':''} data-id="${id}">
+        <label for="${id}">${it}</label>
+      </div>`;
+    });
+    html += `</div></div>`;
+  });
+
+  panel.innerHTML = html;
+
+  panel.querySelectorAll('input[type=checkbox]').forEach(cb=>{
+    cb.addEventListener('change', async (e)=>{
+      const id = e.target.dataset.id;
+      if(e.target.checked){ checked.add(id); } else { checked.delete(id); }
+      await saveChecks();
+      renderAll();
+    });
+  });
+}
+
+function renderProgress(){
+  const all = allItemIds();
+  const done = all.filter(id=>checked.has(id)).length;
+  const pct = all.length? Math.round(done/all.length*100) : 0;
+  document.getElementById('progressFill').style.width = pct+'%';
+  document.getElementById('progressLabel').textContent = `${done} / ${all.length} done · ${pct}%`;
+  const ticksEl = document.getElementById('progressTicks');
+  if(!ticksEl.childElementCount){
+    for(let i=0;i<13;i++){ const s=document.createElement('span'); ticksEl.appendChild(s); }
+  }
+}
+
+function renderAll(){
+  renderRail();
+  renderPanel();
+  renderProgress();
+}
+
+const saveBtn = document.getElementById('saveBtn');
+const saveBtnText = document.getElementById('saveBtnText');
+let saveResetTimer = null;
+saveBtn.addEventListener('click', async ()=>{
+  saveBtnText.textContent = 'Saving…';
+  await saveChecks();
+  updateStorageBadge();
+  saveBtn.classList.add('saved');
+  saveBtnText.textContent = 'Saved ✓';
+  clearTimeout(saveResetTimer);
+  saveResetTimer = setTimeout(()=>{
+    saveBtn.classList.remove('saved');
+    saveBtnText.textContent = 'Save Progress';
+  }, 1800);
+});
+
+document.getElementById('resetBtn').addEventListener('click', async ()=>{
+  if(confirm('Clear every checkmark in this planner? This cannot be undone.')){
+    checked = new Set();
+    await saveChecks();
+    updateStorageBadge();
+    renderAll();
+  }
+});
+
+(async function init(){
+  await loadChecks();
+  updateStorageBadge();
+  renderAll();
+})();
+</script>
+</body>
+</html>
